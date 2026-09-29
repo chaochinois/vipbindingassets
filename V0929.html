@@ -9,7 +9,7 @@
   【假设说明 / Assumptions】
   - BRD 中 P-02 / P-03 的“字段与控件清单”为空，字段依据 P-01 与截图补全（假设）。
   - P-03“授权历史”无截图，采用 Dynamics 365 子网格方式呈现（【Patch1-18】时间线已移除）。
-  - 手机号 / 邮箱等均为脱敏占位数据。
+  - 手机号 / 邮箱等为演示用虚构数据（【Patch1-21】已取消脱敏星号）。
   - Mock 医院数据：复旦大学附属华山医院、同济大学附属同济医院、上海交通大学医学院附属瑞金医院。
   ============================================================================
 -->
@@ -440,6 +440,8 @@
     margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-strong);
   }
   .renew-custom .rc-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  /* 【Patch1-20】续期对话框分区标题 */
+  .renew-sec-label { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
   .renew-err { color: var(--red); font-size: 12px; margin-top: 6px; display: none; }
   /* Toast 提示 */
   .toast-wrap { position: fixed; top: 60px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
@@ -817,9 +819,9 @@
               <div class="form-grid">
                 <div class="form-field"><span class="field-label">Full Name <span class="req">*</span></span><div class="fv" data-field="fullName">张伟</div></div>
                 <div class="form-field"><span class="field-label">Account (Lookup)</span><div class="fv"><span class="lookup-val" data-field="account"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M3 16v-1c0-2 2-3 4-3s4 1 4 3v1z"/><circle cx="7" cy="8" r="2.5"/></svg>复旦大学附属华山医院</span></div></div>
-                <div class="form-field"><span class="field-label">Mobile Phone</span><div class="fv" data-field="mobile">138****4455</div></div>
-                <div class="form-field"><span class="field-label">Business Phone</span><div class="fv" data-field="bphone">021-8244****</div></div>
-                <div class="form-field"><span class="field-label">Email</span><div class="fv" data-field="email">z***@huashan-demo.com</div></div>
+                <div class="form-field"><span class="field-label">Mobile Phone</span><div class="fv" data-field="mobile">13801234455</div></div>
+                <div class="form-field"><span class="field-label">Business Phone</span><div class="fv" data-field="bphone">021-82441001</div></div>
+                <div class="form-field"><span class="field-label">Email</span><div class="fv" data-field="email">zhangwei@huashan-demo.com</div></div>
                 <div class="form-field"><span class="field-label">Job Title</span><div class="fv" data-field="jobTitle">主任医师</div></div>
                 <div class="form-field"><span class="field-label">City</span><div class="fv" data-field="city">上海</div></div>
                 <div class="form-field"><span class="field-label">Department</span><div class="fv" data-field="dept">神经外科</div></div>
@@ -906,8 +908,7 @@
     <div class="dlg-foot" id="dlgFoot"></div>
   </div>
 </div>
-<!-- Toast 容器 -->
-<div class="toast-wrap" id="toastWrap"></div>
+<!-- 【Patch1-19】Toast 容器已移除，页面不再显示任何右上角提示 -->
 <script>
 /* =====================================================================
    数据层：Mock 数据 (脱敏)
@@ -918,53 +919,53 @@ const MODALITIES = ['CT','MR','US','DXR','IGT','MI','PIC'];
 const DEPARTMENTS = ['放射科','影像科','超声科','核医学科','导管室','ICU','急诊科','神经外科','神经内科','心内科','呼吸科','消化科','骨科','儿科','普外科','肾内科','康复科','泌尿外科','感染科','内分泌科'];
 // P-01 授权用户列表数据（【Patch1-9】每位联系人新增 modality 多值绑定；【Patch1-12】新增 devices 绑定设备）
 let users = [
-  { id:'U001', fullName:'张伟', mobile:'138****4455', account:'复旦大学附属华山医院', jobTitle:'主任医师', bphone:'021-8244****', email:'z***@huashan-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2026-12-31', dept:'神经外科', modality:['CT','MR','IGT'],
+  { id:'U001', fullName:'张伟', mobile:'13801234455', account:'复旦大学附属华山医院', jobTitle:'主任医师', bphone:'021-82441001', email:'zhangwei@huashan-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2026-12-31', dept:'神经外科', modality:['CT','MR','IGT'],
     devices:[
       { account:'HS-A9001', accountName:'复旦大学附属华山医院', modality:'CT', model:'Incisive CT', serial:'SN-HS-0001', status:'Active', dept:'放射科' },
       { account:'HS-A9002', accountName:'复旦大学附属华山医院', modality:'MR', model:'Ingenia 3.0T', serial:'SN-HS-0002', status:'Active', dept:'放射科' },
       { account:'HS-A9003', accountName:'复旦大学附属华山医院', modality:'IGT', model:'Azurion 7', serial:'SN-HS-0003', status:'Active', dept:'导管室' },
     ] },
-  { id:'U002', fullName:'李娜', mobile:'139****1027', account:'复旦大学附属华山医院', jobTitle:'副主任医师', bphone:'021-8244****', email:'l***@huashan-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2026-09-01', dept:'皮肤科', modality:['US','DXR'],
+  { id:'U002', fullName:'李娜', mobile:'13901231027', account:'复旦大学附属华山医院', jobTitle:'副主任医师', bphone:'021-82441002', email:'lina@huashan-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2026-09-01', dept:'皮肤科', modality:['US','DXR'],
     devices:[
       { account:'HS-A9004', accountName:'复旦大学附属华山医院', modality:'US', model:'EPIQ Elite', serial:'SN-HS-0004', status:'Active', dept:'超声科' },
       { account:'HS-A9005', accountName:'复旦大学附属华山医院', modality:'DXR', model:'DigitalDiagnost C90', serial:'SN-HS-0005', status:'Under Maintenance', dept:'放射科' },
     ] },
-  { id:'U003', fullName:'王强', mobile:'137****6688', account:'复旦大学附属华山医院', jobTitle:'主治医师', bphone:'021-8244****', email:'w***@huashan-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2025-06-30', dept:'骨科', modality:['DXR'],
+  { id:'U003', fullName:'王强', mobile:'13701236688', account:'复旦大学附属华山医院', jobTitle:'主治医师', bphone:'021-82441003', email:'wangqiang@huashan-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2025-06-30', dept:'骨科', modality:['DXR'],
     devices:[
       { account:'HS-A9005', accountName:'复旦大学附属华山医院', modality:'DXR', model:'DigitalDiagnost C90', serial:'SN-HS-0005', status:'Under Maintenance', dept:'骨科' },
     ] },
-  { id:'U004', fullName:'陈静', mobile:'135****3321', account:'同济大学附属同济医院', jobTitle:'主任医师', bphone:'021-6611****', email:'c***@tongji-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2027-03-15', dept:'心内科', modality:['CT','IGT','PIC'],
+  { id:'U004', fullName:'陈静', mobile:'13501233321', account:'同济大学附属同济医院', jobTitle:'主任医师', bphone:'021-66112001', email:'chenjing@tongji-demo.com', city:'上海', vip:true,  vipEnabled:true, validUntil:'2027-03-15', dept:'心内科', modality:['CT','IGT','PIC'],
     devices:[
       { account:'TJ-A8001', accountName:'同济大学附属同济医院', modality:'CT', model:'Spectral CT 7500', serial:'SN-TJ-0001', status:'Active', dept:'影像科' },
       { account:'TJ-A8002', accountName:'同济大学附属同济医院', modality:'IGT', model:'Azurion 5', serial:'SN-TJ-0002', status:'Active', dept:'导管室' },
       { account:'TJ-A8003', accountName:'同济大学附属同济医院', modality:'PIC', model:'IntelliVue MX750', serial:'SN-TJ-0003', status:'Active', dept:'ICU' },
     ] },
-  { id:'U005', fullName:'刘洋', mobile:'136****9080', account:'同济大学附属同济医院', jobTitle:'副主任医师', bphone:'021-6611****', email:'ly***@tongji-demo.com', city:'上海', vip:false, vipEnabled:false, validUntil:'2025-01-31', dept:'呼吸科', modality:['CT'],
+  { id:'U005', fullName:'刘洋', mobile:'13601239080', account:'同济大学附属同济医院', jobTitle:'副主任医师', bphone:'021-66112002', email:'liuyang@tongji-demo.com', city:'上海', vip:false, vipEnabled:false, validUntil:'2025-01-31', dept:'呼吸科', modality:['CT'],
     devices:[
       { account:'TJ-A8001', accountName:'同济大学附属同济医院', modality:'CT', model:'Spectral CT 7500', serial:'SN-TJ-0001', status:'Active', dept:'呼吸科' },
     ] },
-  { id:'U006', fullName:'赵敏', mobile:'188****4512', account:'上海交通大学医学院附属瑞金医院', jobTitle:'主治医师', bphone:'021-6437****', email:'zm***@ruijin-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2026-11-20', dept:'内分泌科', modality:['MI','US'],
+  { id:'U006', fullName:'赵敏', mobile:'18801234512', account:'上海交通大学医学院附属瑞金医院', jobTitle:'主治医师', bphone:'021-64373001', email:'zhaomin@ruijin-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2026-11-20', dept:'内分泌科', modality:['MI','US'],
     devices:[
       { account:'RJ-A7001', accountName:'上海交通大学医学院附属瑞金医院', modality:'MI', model:'Vereos PET/CT', serial:'SN-RJ-0001', status:'Active', dept:'核医学科' },
       { account:'RJ-A7003', accountName:'上海交通大学医学院附属瑞金医院', modality:'US', model:'EPIQ CVx', serial:'SN-RJ-0003', status:'Active', dept:'超声科' },
     ] },
   /* 【Patch1-9】补充更多带多模态绑定的 mock 数据，便于 workshop demo */
-  { id:'U007', fullName:'林峰', mobile:'138****7712', account:'复旦大学附属华山医院北院', jobTitle:'主任医师', bphone:'021-5666****', email:'lf***@huashan-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2027-01-31', dept:'神经内科', modality:['MR','CT','MI'],
+  { id:'U007', fullName:'林峰', mobile:'13801237712', account:'复旦大学附属华山医院北院', jobTitle:'主任医师', bphone:'021-56661101', email:'linfeng@huashan-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2027-01-31', dept:'神经内科', modality:['MR','CT','MI'],
     devices:[
       { account:'HSN-A9101', accountName:'复旦大学附属华山医院北院', modality:'CT', model:'Incisive CT', serial:'SN-HSN-0001', status:'Active', dept:'放射科' },
       { account:'HSN-A9102', accountName:'复旦大学附属华山医院北院', modality:'MR', model:'Ingenia Elition 3.0T', serial:'SN-HSN-0002', status:'Active', dept:'放射科' },
     ] },
-  { id:'U008', fullName:'马涛', mobile:'135****4478', account:'同济大学附属同济医院北院', jobTitle:'主任医师', bphone:'021-6688****', email:'mt***@tongji-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2026-10-15', dept:'消化科', modality:['US','DXR','IGT'],
+  { id:'U008', fullName:'马涛', mobile:'13501234478', account:'同济大学附属同济医院北院', jobTitle:'主任医师', bphone:'021-66881101', email:'matao@tongji-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2026-10-15', dept:'消化科', modality:['US','DXR','IGT'],
     devices:[
       { account:'TJN-A8101', accountName:'同济大学附属同济医院北院', modality:'US', model:'EPIQ Elite', serial:'SN-TJN-0001', status:'Active', dept:'超声科' },
       { account:'TJN-A8102', accountName:'同济大学附属同济医院北院', modality:'DXR', model:'DuraDiagnost F30', serial:'SN-TJN-0002', status:'Active', dept:'放射科' },
       { account:'TJN-A8103', accountName:'同济大学附属同济医院北院', modality:'IGT', model:'Azurion 3', serial:'SN-TJN-0003', status:'Under Maintenance', dept:'导管室' },
     ] },
-  { id:'U009', fullName:'蒋伟', mobile:'189****7745', account:'瑞金医院无锡分院', jobTitle:'副主任医师', bphone:'0510-8523****', email:'jw***@ruijin-demo.com', city:'无锡', vip:true, vipEnabled:true, validUntil:'2025-12-31', dept:'心内科', modality:['IGT','PIC'],
+  { id:'U009', fullName:'蒋伟', mobile:'18901237745', account:'瑞金医院无锡分院', jobTitle:'副主任医师', bphone:'0510-85231201', email:'jiangwei@ruijin-demo.com', city:'无锡', vip:true, vipEnabled:true, validUntil:'2025-12-31', dept:'心内科', modality:['IGT','PIC'],
     devices:[
       { account:'RJWX-A7201', accountName:'瑞金医院无锡分院', modality:'IGT', model:'Azurion 7 C20', serial:'SN-RJWX-0001', status:'Active', dept:'导管室' },
     ] },
-  { id:'U010', fullName:'徐磊', mobile:'137****9908', account:'复旦大学附属华山医院虹桥院区', jobTitle:'副主任医师', bphone:'021-5777****', email:'xl***@huashan-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2027-06-30', dept:'骨科', modality:['DXR','CT'],
+  { id:'U010', fullName:'徐磊', mobile:'13701239908', account:'复旦大学附属华山医院虹桥院区', jobTitle:'副主任医师', bphone:'021-57771201', email:'xulei@huashan-demo.com', city:'上海', vip:true, vipEnabled:true, validUntil:'2027-06-30', dept:'骨科', modality:['DXR','CT'],
     devices:[
       { account:'HSHQ-A9201', accountName:'复旦大学附属华山医院虹桥院区', modality:'DXR', model:'DigitalDiagnost C50', serial:'SN-HSHQ-0001', status:'Active', dept:'放射科' },
       { account:'HSHQ-A9203', accountName:'复旦大学附属华山医院虹桥院区', modality:'CT', model:'Access CT', serial:'SN-HSHQ-0003', status:'Pending Install', dept:'放射科' },
@@ -973,10 +974,10 @@ let users = [
 // 医院 + 联系人 Mock（P-02 用）
 const hospitals = [
   { code:'HS', name:'复旦大学附属华山医院', keys:['华山','fudan','huashan'], contacts:[
-    { account:'HS-C1001', accountName:'复旦大学附属华山医院', city:'上海', fullName:'张伟', mobile:'138****4455', jobTitle:'主任医师', dept:'神经外科' },
-    { account:'HS-C1002', accountName:'复旦大学附属华山医院', city:'上海', fullName:'李娜', mobile:'139****1027', jobTitle:'副主任医师', dept:'皮肤科' },
-    { account:'HS-C1003', accountName:'复旦大学附属华山医院', city:'上海', fullName:'王强', mobile:'137****6688', jobTitle:'主治医师', dept:'骨科' },
-    { account:'HS-C1004', accountName:'复旦大学附属华山医院', city:'上海', fullName:'孙丽', mobile:'150****2210', jobTitle:'住院医师', dept:'感染科' },
+    { account:'HS-C1001', accountName:'复旦大学附属华山医院', city:'上海', fullName:'张伟', mobile:'13801234455', jobTitle:'主任医师', dept:'神经外科' },
+    { account:'HS-C1002', accountName:'复旦大学附属华山医院', city:'上海', fullName:'李娜', mobile:'13901231027', jobTitle:'副主任医师', dept:'皮肤科' },
+    { account:'HS-C1003', accountName:'复旦大学附属华山医院', city:'上海', fullName:'王强', mobile:'13701236688', jobTitle:'主治医师', dept:'骨科' },
+    { account:'HS-C1004', accountName:'复旦大学附属华山医院', city:'上海', fullName:'孙丽', mobile:'15001232210', jobTitle:'住院医师', dept:'感染科' },
   ],
   /* 【Patch1-10】设备（客户资产）Mock 数据 */
   devices:[
@@ -987,10 +988,10 @@ const hospitals = [
     { account:'HS-A9005', accountName:'复旦大学附属华山医院', modality:'DXR', model:'DigitalDiagnost C90', serial:'SN-HS-0005', status:'Under Maintenance', dept:'放射科' },
   ]},
   { code:'TJ', name:'同济大学附属同济医院', keys:['同济','tongji'], contacts:[
-    { account:'TJ-C2001', accountName:'同济大学附属同济医院', city:'上海', fullName:'陈静', mobile:'135****3321', jobTitle:'主任医师', dept:'心内科' },
-    { account:'TJ-C2002', accountName:'同济大学附属同济医院', city:'上海', fullName:'刘洋', mobile:'136****9080', jobTitle:'副主任医师', dept:'呼吸科' },
-    { account:'TJ-C2003', accountName:'同济大学附属同济医院', city:'上海', fullName:'周浩', mobile:'159****7745', jobTitle:'主治医师', dept:'普外科' },
-    { account:'TJ-C2004', accountName:'同济大学附属同济医院', city:'上海', fullName:'吴倩', mobile:'158****1188', jobTitle:'住院医师', dept:'儿科' },
+    { account:'TJ-C2001', accountName:'同济大学附属同济医院', city:'上海', fullName:'陈静', mobile:'13501233321', jobTitle:'主任医师', dept:'心内科' },
+    { account:'TJ-C2002', accountName:'同济大学附属同济医院', city:'上海', fullName:'刘洋', mobile:'13601239080', jobTitle:'副主任医师', dept:'呼吸科' },
+    { account:'TJ-C2003', accountName:'同济大学附属同济医院', city:'上海', fullName:'周浩', mobile:'15901237745', jobTitle:'主治医师', dept:'普外科' },
+    { account:'TJ-C2004', accountName:'同济大学附属同济医院', city:'上海', fullName:'吴倩', mobile:'15801231188', jobTitle:'住院医师', dept:'儿科' },
   ],
   devices:[
     { account:'TJ-A8001', accountName:'同济大学附属同济医院', modality:'CT', model:'Spectral CT 7500', serial:'SN-TJ-0001', status:'Active', dept:'影像科' },
@@ -999,8 +1000,8 @@ const hospitals = [
     { account:'TJ-A8004', accountName:'同济大学附属同济医院', modality:'US', model:'Affiniti 70', serial:'SN-TJ-0004', status:'Active', dept:'超声科' },
   ]},
   { code:'RJ', name:'上海交通大学医学院附属瑞金医院', keys:['瑞金','ruijin'], contacts:[
-    { account:'RJ-C3001', accountName:'上海交通大学医学院附属瑞金医院', city:'上海', fullName:'赵敏', mobile:'188****4512', jobTitle:'主治医师', dept:'内分泌科' },
-    { account:'RJ-C3002', accountName:'上海交通大学医学院附属瑞金医院', city:'上海', fullName:'郑凯', mobile:'186****3390', jobTitle:'主任医师', dept:'血液科' },
+    { account:'RJ-C3001', accountName:'上海交通大学医学院附属瑞金医院', city:'上海', fullName:'赵敏', mobile:'18801234512', jobTitle:'主治医师', dept:'内分泌科' },
+    { account:'RJ-C3002', accountName:'上海交通大学医学院附属瑞金医院', city:'上海', fullName:'郑凯', mobile:'18601233390', jobTitle:'主任医师', dept:'血液科' },
   ],
   devices:[
     { account:'RJ-A7001', accountName:'上海交通大学医学院附属瑞金医院', modality:'MI', model:'Vereos PET/CT', serial:'SN-RJ-0001', status:'Active', dept:'核医学科' },
@@ -1009,9 +1010,9 @@ const hospitals = [
   ]},
   // 【Patch1-8】新增主院/分院 Mock 数据：搜索主院关键字（华山/同济/瑞金）时，主院与分院一并显示，便于 workshop demo
   { code:'HS-N', name:'复旦大学附属华山医院北院（分院）', keys:['华山','huashan','北院','分院'], contacts:[
-    { account:'HSN-C1101', accountName:'复旦大学附属华山医院北院', city:'上海', fullName:'林峰', mobile:'138****7712', jobTitle:'主任医师', dept:'神经内科' },
-    { account:'HSN-C1102', accountName:'复旦大学附属华山医院北院', city:'上海', fullName:'高媛', mobile:'139****3325', jobTitle:'主治医师', dept:'内分泌科' },
-    { account:'HSN-C1103', accountName:'复旦大学附属华山医院北院', city:'上海', fullName:'杜鹏', mobile:'137****5561', jobTitle:'住院医师', dept:'急诊科' },
+    { account:'HSN-C1101', accountName:'复旦大学附属华山医院北院', city:'上海', fullName:'林峰', mobile:'13801237712', jobTitle:'主任医师', dept:'神经内科' },
+    { account:'HSN-C1102', accountName:'复旦大学附属华山医院北院', city:'上海', fullName:'高媛', mobile:'13901233325', jobTitle:'主治医师', dept:'内分泌科' },
+    { account:'HSN-C1103', accountName:'复旦大学附属华山医院北院', city:'上海', fullName:'杜鹏', mobile:'13701235561', jobTitle:'住院医师', dept:'急诊科' },
   ],
   devices:[
     { account:'HSN-A9101', accountName:'复旦大学附属华山医院北院', modality:'CT', model:'Incisive CT', serial:'SN-HSN-0001', status:'Active', dept:'放射科' },
@@ -1019,8 +1020,8 @@ const hospitals = [
     { account:'HSN-A9103', accountName:'复旦大学附属华山医院北院', modality:'PIC', model:'IntelliVue MX550', serial:'SN-HSN-0003', status:'Active', dept:'急诊科' },
   ]},
   { code:'HS-HQ', name:'复旦大学附属华山医院虹桥院区（分院）', keys:['华山','huashan','虹桥','分院'], contacts:[
-    { account:'HSHQ-C1201', accountName:'复旦大学附属华山医院虹桥院区', city:'上海', fullName:'徐磊', mobile:'137****9908', jobTitle:'副主任医师', dept:'骨科' },
-    { account:'HSHQ-C1202', accountName:'复旦大学附属华山医院虹桥院区', city:'上海', fullName:'钱芳', mobile:'150****1180', jobTitle:'住院医师', dept:'康复科' },
+    { account:'HSHQ-C1201', accountName:'复旦大学附属华山医院虹桥院区', city:'上海', fullName:'徐磊', mobile:'13701239908', jobTitle:'副主任医师', dept:'骨科' },
+    { account:'HSHQ-C1202', accountName:'复旦大学附属华山医院虹桥院区', city:'上海', fullName:'钱芳', mobile:'15001231180', jobTitle:'住院医师', dept:'康复科' },
   ],
   devices:[
     { account:'HSHQ-A9201', accountName:'复旦大学附属华山医院虹桥院区', modality:'DXR', model:'DigitalDiagnost C50', serial:'SN-HSHQ-0001', status:'Active', dept:'放射科' },
@@ -1028,9 +1029,9 @@ const hospitals = [
     { account:'HSHQ-A9203', accountName:'复旦大学附属华山医院虹桥院区', modality:'CT', model:'Access CT', serial:'SN-HSHQ-0003', status:'Pending Install', dept:'放射科' },
   ]},
   { code:'TJ-N', name:'同济大学附属同济医院北院（分院）', keys:['同济','tongji','北院','分院'], contacts:[
-    { account:'TJN-C2101', accountName:'同济大学附属同济医院北院', city:'上海', fullName:'马涛', mobile:'135****4478', jobTitle:'主任医师', dept:'消化科' },
-    { account:'TJN-C2102', accountName:'同济大学附属同济医院北院', city:'上海', fullName:'许敏', mobile:'136****6690', jobTitle:'主治医师', dept:'肾内科' },
-    { account:'TJN-C2103', accountName:'同济大学附属同济医院北院', city:'上海', fullName:'范勇', mobile:'159****2274', jobTitle:'住院医师', dept:'泌尿外科' },
+    { account:'TJN-C2101', accountName:'同济大学附属同济医院北院', city:'上海', fullName:'马涛', mobile:'13501234478', jobTitle:'主任医师', dept:'消化科' },
+    { account:'TJN-C2102', accountName:'同济大学附属同济医院北院', city:'上海', fullName:'许敏', mobile:'13601236690', jobTitle:'主治医师', dept:'肾内科' },
+    { account:'TJN-C2103', accountName:'同济大学附属同济医院北院', city:'上海', fullName:'范勇', mobile:'15901232274', jobTitle:'住院医师', dept:'泌尿外科' },
   ],
   devices:[
     { account:'TJN-A8101', accountName:'同济大学附属同济医院北院', modality:'US', model:'EPIQ Elite', serial:'SN-TJN-0001', status:'Active', dept:'超声科' },
@@ -1038,8 +1039,8 @@ const hospitals = [
     { account:'TJN-A8103', accountName:'同济大学附属同济医院北院', modality:'IGT', model:'Azurion 3', serial:'SN-TJN-0003', status:'Under Maintenance', dept:'导管室' },
   ]},
   { code:'RJ-N', name:'上海交通大学医学院附属瑞金医院北院（分院）', keys:['瑞金','ruijin','北院','分院'], contacts:[
-    { account:'RJN-C3101', accountName:'上海交通大学医学院附属瑞金医院北院', city:'上海', fullName:'冯凯', mobile:'188****5523', jobTitle:'主任医师', dept:'普外科' },
-    { account:'RJN-C3102', accountName:'上海交通大学医学院附属瑞金医院北院', city:'上海', fullName:'邓丽', mobile:'186****3391', jobTitle:'主治医师', dept:'风湿免疫科' },
+    { account:'RJN-C3101', accountName:'上海交通大学医学院附属瑞金医院北院', city:'上海', fullName:'冯凯', mobile:'18801235523', jobTitle:'主任医师', dept:'普外科' },
+    { account:'RJN-C3102', accountName:'上海交通大学医学院附属瑞金医院北院', city:'上海', fullName:'邓丽', mobile:'18601233391', jobTitle:'主治医师', dept:'风湿免疫科' },
   ],
   devices:[
     { account:'RJN-A7101', accountName:'上海交通大学医学院附属瑞金医院北院', modality:'CT', model:'Incisive CT', serial:'SN-RJN-0001', status:'Active', dept:'放射科' },
@@ -1047,8 +1048,8 @@ const hospitals = [
     { account:'RJN-A7103', accountName:'上海交通大学医学院附属瑞金医院北院', modality:'PIC', model:'IntelliVue MX450', serial:'SN-RJN-0003', status:'Active', dept:'ICU' },
   ]},
   { code:'RJ-WX', name:'瑞金医院无锡分院', keys:['瑞金','ruijin','无锡','分院'], contacts:[
-    { account:'RJWX-C3201', accountName:'瑞金医院无锡分院', city:'无锡', fullName:'蒋伟', mobile:'189****7745', jobTitle:'副主任医师', dept:'心内科' },
-    { account:'RJWX-C3202', accountName:'瑞金医院无锡分院', city:'无锡', fullName:'魏娜', mobile:'158****2218', jobTitle:'主治医师', dept:'儿科' },
+    { account:'RJWX-C3201', accountName:'瑞金医院无锡分院', city:'无锡', fullName:'蒋伟', mobile:'18901237745', jobTitle:'副主任医师', dept:'心内科' },
+    { account:'RJWX-C3202', accountName:'瑞金医院无锡分院', city:'无锡', fullName:'魏娜', mobile:'15801232218', jobTitle:'主治医师', dept:'儿科' },
   ],
   devices:[
     { account:'RJWX-A7201', accountName:'瑞金医院无锡分院', modality:'IGT', model:'Azurion 7 C20', serial:'SN-RJWX-0001', status:'Active', dept:'导管室' },
@@ -1575,7 +1576,7 @@ function onSaveAuth(){
         selArr.forEach((c,i)=>{
           users.unshift({
             id:'N'+Date.now()+i, fullName:c.fullName, mobile:c.mobile, account:c.accountName,
-            jobTitle:c.jobTitle, bphone:'021-0000****', email:(c.fullName)+'@demo.com',
+            jobTitle:c.jobTitle, bphone:'021-00001000', email:(c.fullName)+'@demo.com',
             city:c.city, vip:true, vipEnabled:true, validUntil:date, dept:c.dept,
             modality: modList.length? modList : [],
             // 【Patch1-12】已选设备写入记录，供 P-03“绑定设备”模块展示与编辑
@@ -1761,24 +1762,28 @@ function onFormRenew(){
     : `该用户仍有效，将在当前有效期（${u.validUntil.replace(/-/g,'/')}）基础上顺延。`;
   showDialog({
     icon:'primary', title:'续期',
-    body:`<div style="margin-bottom:10px;">为 <b>${u.fullName}</b> 快速续期，请选择时长：</div>
-      <div class="muted" style="font-size:12px; margin-bottom:12px;">${baseTip}</div>
+    /* 【Patch1-20】续期 Dialog 重排版：快速续期与自定义日期分区更清晰；“应用/取消”统一下沉到底部同一行 */
+    body:`<div style="margin-bottom:6px;">为 <b>${u.fullName}</b> 续期</div>
+      <div class="muted" style="font-size:12px; margin-bottom:14px;">${baseTip}</div>
+      <div class="renew-sec-label">快速续期</div>
       <div style="display:flex; flex-direction:column; gap:8px;">
         <button class="btn" style="justify-content:space-between; display:flex; width:100%;" onclick="doRenew(6)"><span>+ 6 个月</span><span class="muted">至 ${preview(6)}</span></button>
         <button class="btn" style="justify-content:space-between; display:flex; width:100%;" onclick="doRenew(12)"><span>+ 1 年</span><span class="muted">至 ${preview(12)}</span></button>
         <button class="btn" style="justify-content:space-between; display:flex; width:100%;" onclick="doRenew(24)"><span>+ 2 年</span><span class="muted">至 ${preview(24)}</span></button>
       </div>
-      <!-- 【Patch1-13】新增自定义授权结束日期 -->
+      <!-- 【Patch1-13】自定义授权结束日期（【Patch1-20】“应用”按钮移至底部操作区） -->
       <div class="renew-custom">
-        <label class="field-label" for="renewCustomDate">自定义结束日期（精确到天）</label>
+        <div class="renew-sec-label">自定义结束日期</div>
         <div class="rc-row">
           <input type="date" id="renewCustomDate" class="date-input" style="flex:1;" min="${minRenewDate(u)}" aria-label="自定义授权结束日期" />
-          <button class="btn primary" onclick="doRenewCustom()">应用</button>
         </div>
-        <div class="muted" style="font-size:12px; margin-top:6px;">结束日期须晚于 ${minRenewDate(u).replace(/-/g,'/')}。</div>
+        <div class="muted" style="font-size:12px; margin-top:6px;">精确到天，须晚于 ${minRenewDate(u).replace(/-/g,'/')}。</div>
         <div class="renew-err" id="renewErr">请选择一个晚于当前基准日期的结束日期。</div>
       </div>`,
-    buttons:[ {text:'取消', cls:'btn', onclick:closeDialog} ]
+    buttons:[
+      {text:'取消', cls:'btn', onclick:closeDialog},
+      {text:'应用', cls:'btn primary', onclick:doRenewCustom}
+    ]
   });
 }
 /* 【Patch1-13】自定义续期的最小可选日期 = 续期基准日 */
@@ -1856,16 +1861,8 @@ function showDialog({icon,title,body,buttons}){
 }
 function closeDialog(){ document.getElementById('overlay').classList.remove('show'); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDialog(); });
-function toast(type,title,msg){
-  const wrap=document.getElementById('toastWrap');
-  const t=document.createElement('div'); t.className='toast '+type;
-  const ic = type==='success'?'<svg width="18" height="18" viewBox="0 0 20 20" fill="var(--green)"><circle cx="10" cy="10" r="9"/><path d="M6 10l3 3 5-6" stroke="#fff" stroke-width="1.6" fill="none"/></svg>'
-    : type==='error'?'<svg width="18" height="18" viewBox="0 0 20 20" fill="var(--red)"><circle cx="10" cy="10" r="9"/><path d="M7 7l6 6M13 7l-6 6" stroke="#fff" stroke-width="1.6"/></svg>'
-    : '<svg width="18" height="18" viewBox="0 0 20 20" fill="var(--amber)"><circle cx="10" cy="10" r="9"/><path d="M10 6v5M10 13.5v.5" stroke="#fff" stroke-width="1.6"/></svg>';
-  t.innerHTML=`<span class="t-ico">${ic}</span><div><div class="t-title">${title}</div><div class="t-msg">${msg||''}</div></div>`;
-  wrap.appendChild(t);
-  setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3200);
-}
+/* 【Patch1-19】全站 Toast 已停用：保留函数签名以避免改动各处调用点，但不再渲染任何提示 */
+function toast(type,title,msg){ /* no-op */ }
 /* =====================================================================
    初始化
    ===================================================================== */
