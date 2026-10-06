@@ -1,11 +1,5 @@
-### 0929
-- 删除了Department, 该字段挂在设备上, DIY字段
-- 授权历史, 去除了下面Diagram, 仅保留上方.
-- 去除所有toasts
-- 去除脱敏mock数据
-- 续期Dialog重新排版
-
+## Version Log
 | Version |  Update Content |
 | ------- | -------------- |
 | v0917    | 第一次 workshop |
-| v0929   | 删除了Department, 该字段挂在设备上, DIY字段 |
+| v0929   | 1.删除Department,该字段应该挂在设备上,DIY字段 2.授权历史,去除下方Diagram显示 3.去除所有toasts 4.去除脱敏 |
